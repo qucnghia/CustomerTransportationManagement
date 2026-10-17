@@ -21,14 +21,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO XE (BienSo, MauXe, HangSanXuat, DoiXe, Model, SoGhe, SoNamSuDung, NgayBaoDuongCuoi) VALUES
 ('29B-188.88', 'Đỏ Trắng', 'Hyundai', 2021, 'Universe Noble 45 chỗ', 45, 5, '2026-06-15'),
 ('29B-266.99', 'Xanh Dương', 'Thaco', 2022, 'Mobihome TB120 34 phòng', 34, 4, '2026-08-01'),
-('29B-345.67', 'Trắng Bạc', 'Tracomeco', 2020, 'Universe DCar Limousine', 29, 6, '2025-11-20'), -- Xe bảo dưỡng lâu để test quá hạn
+('29B-345.67', 'Trắng Bạc', 'Tracomeco', 2020, 'Universe DCar Limousine', 29, 6, '2025-10-01'), -- Quá hạn 12 ngày (chu kỳ 357 ngày)
 ('51B-112.23', 'Vàng Cát', 'Hyundai', 2023, 'New Premium 45 chỗ', 45, 3, '2026-07-10'),
 ('51B-456.78', 'Xanh Lá', 'Thaco', 2021, 'Mobihome Deluxe 40 chỗ', 40, 5, '2026-05-12'),
 ('51B-789.01', 'Đỏ Mận', 'Ford', 2022, 'Transit VIP 16 chỗ', 16, 4, '2026-08-25'),
-('43B-012.34', 'Trắng', 'Thaco', 2020, 'Meadow 29 chỗ', 29, 6, '2025-10-15'), -- Xe bảo dưỡng lâu để test quá hạn
+('43B-012.34', 'Trắng', 'Thaco', 2020, 'Meadow 29 chỗ', 29, 6, '2025-09-15'), -- Quá hạn 27 ngày (chu kỳ 358 ngày)
 ('43B-567.89', 'Xanh Biển', 'Hyundai', 2022, 'Universe Luxury 45 chỗ', 45, 4, '2026-09-05'),
 ('14B-888.66', 'Bạc', 'Ford', 2023, 'Transit Limousine 16 chỗ', 16, 3, '2026-09-12'),
-('14B-999.88', 'Đỏ Đô', 'Thaco', 2021, 'Mobihome TB120 36 chỗ', 36, 5, '2026-01-10'), -- Xe bảo dưỡng lâu, chạy nhiều đèo núi -> Quá hạn nặng
+('14B-999.88', 'Đỏ Đô', 'Thaco', 2021, 'Mobihome TB120 36 chỗ', 36, 5, '2025-10-20'), -- Chạy nhiều đèo núi, trừ 43 ngày -> Quá hạn 33 ngày!
 ('36B-333.22', 'Trắng Đen', 'Tracomeco', 2023, 'Universe 45 chỗ', 45, 3, '2026-08-18'),
 ('36B-777.99', 'Xanh Dương', 'Hyundai', 2022, 'Solati VIP 16 chỗ', 16, 4, '2026-09-20');
 
@@ -74,11 +74,11 @@ INSERT INTO TUYEN_XE (MaTuyen, DiemDau, DiemCuoi, DoDaiKm, DoPhucTap) VALUES
 INSERT INTO LICH_SU_BAO_DUONG (BienSoXe, NgayBaoDuong, ChiPhi, NoiDung) VALUES
 ('29B-188.88', '2026-06-15', 8500000.00, 'Bảo dưỡng định kỳ 40,000 km, thay dầu máy, kiểm tra má phanh'),
 ('29B-266.99', '2026-08-01', 12000000.00, 'Thay 4 lốp xe sau Michelin, cân chỉnh thước lái, thay lọc dầu'),
-('29B-345.67', '2025-11-20', 6200000.00, 'Bảo dưỡng hệ thống điều hòa, thay lọc gió cabin'),
+('29B-345.67', '2025-10-01', 6200000.00, 'Bảo dưỡng hệ thống điều hòa, thay lọc gió cabin'),
 ('51B-112.23', '2026-07-10', 9500000.00, 'Bảo dưỡng cấp 3: kiểm tra kim phun, hệ thống treo khí nén'),
 ('51B-456.78', '2026-05-12', 15000000.00, 'Đại tu hệ thống côn, thay bàn ép, láng đĩa phanh'),
-('43B-012.34', '2025-10-15', 7800000.00, 'Thay dầu cầu, dầu số, bảo dưỡng máy phát điện'),
-('14B-999.88', '2026-01-10', 11200000.00, 'Bảo dưỡng định kỳ động cơ Weichai, thay toàn bộ dầu nhớt');
+('43B-012.34', '2025-09-15', 7800000.00, 'Thay dầu cầu, dầu số, bảo dưỡng máy phát điện'),
+('14B-999.88', '2025-10-20', 11200000.00, 'Bảo dưỡng định kỳ động cơ Weichai, thay toàn bộ dầu nhớt');
 
 -- =============================================================================
 -- 5. CHÈN DỮ LIỆU BẢNG CHUYEN_XE (Hơn 50 chuyến xe thực tế)

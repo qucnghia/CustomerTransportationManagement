@@ -30,6 +30,11 @@ BEGIN
     FROM XE 
     WHERE BienSo = NEW.BienSoXe;
 
+    IF v_SoGhe IS NULL OR v_SoGhe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Lỗi nghiệp vụ: Phương tiện được chỉ định không tồn tại trong hệ thống!';
+    END IF;
+
     -- Ràng buộc cốt lõi: Số khách không được vượt quá số ghế trừ 2 (dành cho tổ lái)
     IF NEW.SoKhach > (v_SoGhe - 2) THEN
         SIGNAL SQLSTATE '45000'
@@ -54,6 +59,11 @@ BEGIN
     SELECT SoGhe INTO v_SoGhe 
     FROM XE 
     WHERE BienSo = NEW.BienSoXe;
+
+    IF v_SoGhe IS NULL OR v_SoGhe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Lỗi nghiệp vụ: Phương tiện được chỉ định không tồn tại trong hệ thống!';
+    END IF;
 
     -- Ràng buộc: Số khách không vượt quá số ghế trừ 2
     IF NEW.SoKhach > (v_SoGhe - 2) THEN
