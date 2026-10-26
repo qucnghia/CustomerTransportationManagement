@@ -1,6 +1,7 @@
 package in.nqn.backend.repository;
 
-import in.nqn.backend.entity.TuyenXe;
+import in.nqn.backend.dto.response.BaoDuongXeResponse;
+import in.nqn.backend.entity.LichSuBaoDuong;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -8,14 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LichSuBaoDuongRepository extends JpaRepository<TuyenXe,String> {
+public interface LichSuBaoDuongRepository extends JpaRepository<LichSuBaoDuong, Integer> {
 
-    @Query(value = "select * from v_XeQuaHanBaoDuong",nativeQuery = true)
-    List<Object[]> getDanhSachXeQuaHan();
+    @Query(value = "SELECT * FROM v_XeQuaHanBaoDuong", nativeQuery = true)
+    List<BaoDuongXeResponse> getDanhSachXeQuaHan();
 
-    @Query(value = "select * from v_XeAnToan",nativeQuery = true)
-    List<Object[]> getDanhSachXeAnToan();
+    @Query(value = "SELECT * FROM v_XeAnToan", nativeQuery = true)
+    List<BaoDuongXeResponse> getDanhSachXeAnToan();
 
-    @Query(value = "select * from v_XeBaoDuongChiTiet",nativeQuery = true)
-    List<Object[]> getDanhSachXeBaoDuong();
+    @Query(value = "SELECT * FROM v_XeBaoDuongChiTiet ORDER BY SoNgayConLai", nativeQuery = true)
+    List<BaoDuongXeResponse> getDanhSachXeBaoDuong();
 }

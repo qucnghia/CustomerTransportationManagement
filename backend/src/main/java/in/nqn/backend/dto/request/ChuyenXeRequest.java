@@ -2,20 +2,17 @@ package in.nqn.backend.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 public class ChuyenXeRequest {
     @NotNull(message = "Mã tuyến xe không được để trống")
     private Integer maTuyen;
 
-    @NotNull(message = "Biển số xe không được để trống")
+    @NotBlank(message = "Biển số xe không được để trống")
     private String bienSoXe;
 
     @NotNull(message = "Lái xe chính không được để trống")

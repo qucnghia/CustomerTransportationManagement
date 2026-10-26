@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
+    font-feature-settings: "zero" 0;
+  }
+
+  /* Global typography scale up & clean non-slashed zeros */
+  html {
+    font-size: 16px;
+    font-family: var(--font-sans);
+    font-variant-numeric: normal;
+    font-feature-settings: "zero" 0;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 0.95rem; /* ~15.2px */
+    line-height: 1.6;
+    background-color: #f8fafc;
+    color: #0f172a;
+    overflow-x: hidden;
+    font-variant-numeric: normal;
+    font-feature-settings: "zero" 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ensure NO slashed zero across any tag or font */
+  *, *::before, *::after {
+    font-feature-settings: "zero" 0 !important;
+  }
+
+  /* Override monospace: Use clean tabular Plus Jakarta Sans without slashed zero */
+  code, kbd, samp, pre, .font-mono {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif !important;
+    font-variant-numeric: tabular-nums normal !important;
+    font-feature-settings: "zero" 0, "tnum" 1 !important;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* Custom micro-animations & utilities */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Glassmorphism effects */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* =============================================================================
+   GIAO DIỆN TỐI (bật bằng class "dark" trên <html>, xem ThemeToggle.jsx)
+   Thay vì thêm dark: vào từng class, đổi giá trị biến màu của Tailwind:
+   đảo thang slate, đổi nền trắng và các tông nhạt (50/100/200) sang tông tối.
+   shortcut: chỉ phủ các tông màu đang dùng trong src/, thêm màu mới thì bổ sung ở đây.
+   ============================================================================= */
+.dark {
+  color-scheme: dark;
+  --surface: #172036;
+  --color-slate-50: #1c2741;
+  --color-slate-100: #121b2f;
+  --color-slate-200: #2a3652;
+  --color-slate-300: #3a4763;
+  --color-slate-400: #6b7a96;
+  --color-slate-500: #8d9ab3;
+  --color-slate-600: #a8b3c7;
+  --color-slate-700: #c4cddb;
+  --color-slate-800: #dae0ea;
+  --color-slate-900: #eef2f7;
+  --color-slate-950: #f8fafc;
+  --color-rose-50: color-mix(in srgb, #4c0519 45%, var(--surface));
+  --color-rose-100: color-mix(in srgb, #881337 50%, var(--surface));
+  --color-rose-200: color-mix(in srgb, #881337 85%, var(--surface));
+  --color-emerald-50: color-mix(in srgb, #022c22 45%, var(--surface));
+  --color-emerald-100: color-mix(in srgb, #064e3b 50%, var(--surface));
+  --color-emerald-200: color-mix(in srgb, #064e3b 85%, var(--surface));
+  --color-blue-50: color-mix(in srgb, #172554 45%, var(--surface));
+  --color-blue-100: color-mix(in srgb, #1e3a8a 50%, var(--surface));
+  --color-blue-200: color-mix(in srgb, #1e3a8a 85%, var(--surface));
+  --color-amber-50: color-mix(in srgb, #451a03 45%, var(--surface));
+  --color-amber-100: color-mix(in srgb, #78350f 50%, var(--surface));
+  --color-amber-200: color-mix(in srgb, #78350f 85%, var(--surface));
+  --color-cyan-50: color-mix(in srgb, #083344 45%, var(--surface));
+  --color-cyan-100: color-mix(in srgb, #164e63 50%, var(--surface));
+  --color-cyan-200: color-mix(in srgb, #164e63 85%, var(--surface));
+  --color-purple-50: color-mix(in srgb, #3b0764 45%, var(--surface));
+  --color-purple-100: color-mix(in srgb, #581c87 50%, var(--surface));
+  --color-purple-200: color-mix(in srgb, #581c87 85%, var(--surface));
+  --color-teal-50: color-mix(in srgb, #042f2e 45%, var(--surface));
+  --color-teal-100: color-mix(in srgb, #134e4a 50%, var(--surface));
+  --color-teal-200: color-mix(in srgb, #134e4a 85%, var(--surface));
+  --color-orange-50: color-mix(in srgb, #431407 45%, var(--surface));
+  --color-orange-100: color-mix(in srgb, #7c2d12 50%, var(--surface));
+  --color-orange-200: color-mix(in srgb, #7c2d12 85%, var(--surface));
+  --color-indigo-50: color-mix(in srgb, #1e1b4b 45%, var(--surface));
+  --color-indigo-100: color-mix(in srgb, #312e81 50%, var(--surface));
+  --color-indigo-200: color-mix(in srgb, #312e81 85%, var(--surface));
+}
+
+/* Phần tử nền tối ở cả hai giao diện (sidebar, nút Danh Mục, biển số) giữ bảng slate gốc */
+.dark .bg-slate-800,
+.dark .bg-slate-900,
+.dark .bg-slate-950 {
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+}
+
+.dark body {
+  background-color: #0b1222;
+  color: #e2e8f0;
+}
+.dark ::-webkit-scrollbar-track { background: #0b1222; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* :where() giữ độ ưu tiên thấp để các class hover:/focus: của Tailwind vẫn thắng */
+@layer utilities {
+  :where(.dark) .bg-white,
+  :where(.dark) .focus\:bg-white:focus { background-color: var(--surface); }
+  :where(.dark) .bg-white\/95 { background-color: color-mix(in srgb, var(--surface) 95%, transparent); }
+  :where(.dark) .bg-slate-900\/60,
+  :where(.dark) .bg-slate-950\/70 { background-color: rgb(2 6 23 / 0.7); }
+
+  :where(.dark) .text-rose-700, :where(.dark) .text-rose-800, :where(.dark) .text-rose-900 { color: #fda4af; }
+  :where(.dark) .text-emerald-700, :where(.dark) .text-emerald-800, :where(.dark) .text-emerald-900 { color: #6ee7b7; }
+  :where(.dark) .text-blue-700, :where(.dark) .text-blue-800, :where(.dark) .text-blue-900 { color: #93c5fd; }
+  :where(.dark) .text-amber-700, :where(.dark) .text-amber-800, :where(.dark) .text-amber-900 { color: #fcd34d; }
+  :where(.dark) .text-cyan-700, :where(.dark) .text-cyan-800, :where(.dark) .text-cyan-900 { color: #67e8f9; }
+  :where(.dark) .text-purple-700, :where(.dark) .text-purple-800, :where(.dark) .text-purple-900 { color: #d8b4fe; }
+  :where(.dark) .text-teal-700, :where(.dark) .text-teal-800, :where(.dark) .text-teal-900 { color: #5eead4; }
+  :where(.dark) .text-orange-700, :where(.dark) .text-orange-800, :where(.dark) .text-orange-900 { color: #fdba74; }
+  :where(.dark) .text-indigo-700, :where(.dark) .text-indigo-800, :where(.dark) .text-indigo-900 { color: #a5b4fc; }
+  /* Chữ sáng trên nền gradient màu giữ nguyên */
+  :where(.dark) .text-blue-100 { color: #dbeafe; }
+  :where(.dark) .text-cyan-100 { color: #cffafe; }
+  :where(.dark) .text-emerald-100 { color: #d1fae5; }
+  :where(.dark) .text-rose-100 { color: #ffe4e6; }
+  :where(.dark) .text-orange-200 { color: #fed7aa; }
+}

@@ -21,14 +21,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO XE (BienSo, MauXe, HangSanXuat, DoiXe, Model, SoGhe, SoNamSuDung, NgayBaoDuongCuoi) VALUES
 ('29B-188.88', 'Đỏ Trắng', 'Hyundai', 2021, 'Universe Noble 45 chỗ', 45, 5, '2026-06-15'),
 ('29B-266.99', 'Xanh Dương', 'Thaco', 2022, 'Mobihome TB120 34 phòng', 34, 4, '2026-08-01'),
-('29B-345.67', 'Trắng Bạc', 'Tracomeco', 2020, 'Universe DCar Limousine', 29, 6, '2025-10-01'), -- Quá hạn 12 ngày (chu kỳ 357 ngày)
+('29B-345.67', 'Trắng Bạc', 'Tracomeco', 2020, 'Universe DCar Limousine', 29, 6, '2025-10-01'), -- Chu kỳ 357 ngày -> hạn 2026-09-23 (quá hạn)
 ('51B-112.23', 'Vàng Cát', 'Hyundai', 2023, 'New Premium 45 chỗ', 45, 3, '2026-07-10'),
 ('51B-456.78', 'Xanh Lá', 'Thaco', 2021, 'Mobihome Deluxe 40 chỗ', 40, 5, '2026-05-12'),
 ('51B-789.01', 'Đỏ Mận', 'Ford', 2022, 'Transit VIP 16 chỗ', 16, 4, '2026-08-25'),
-('43B-012.34', 'Trắng', 'Thaco', 2020, 'Meadow 29 chỗ', 29, 6, '2025-09-15'), -- Quá hạn 27 ngày (chu kỳ 358 ngày)
+('43B-012.34', 'Trắng', 'Thaco', 2020, 'Meadow 29 chỗ', 29, 6, '2025-09-15'), -- Chu kỳ 358 ngày -> hạn 2026-09-08 (quá hạn)
 ('43B-567.89', 'Xanh Biển', 'Hyundai', 2022, 'Universe Luxury 45 chỗ', 45, 4, '2026-09-05'),
 ('14B-888.66', 'Bạc', 'Ford', 2023, 'Transit Limousine 16 chỗ', 16, 3, '2026-09-12'),
-('14B-999.88', 'Đỏ Đô', 'Thaco', 2021, 'Mobihome TB120 36 chỗ', 36, 5, '2025-10-20'), -- Chạy nhiều đèo núi, trừ 43 ngày -> Quá hạn 33 ngày!
+('14B-999.88', 'Đỏ Đô', 'Thaco', 2021, 'Mobihome TB120 36 chỗ', 36, 5, '2025-10-20'), -- Chạy nhiều đèo núi, trừ 43 ngày -> chu kỳ 317 ngày, hạn 2026-09-02 (quá hạn)
 ('36B-333.22', 'Trắng Đen', 'Tracomeco', 2023, 'Universe 45 chỗ', 45, 3, '2026-08-18'),
 ('36B-777.99', 'Xanh Dương', 'Hyundai', 2022, 'Solati VIP 16 chỗ', 16, 4, '2026-09-20');
 
@@ -36,21 +36,21 @@ INSERT INTO XE (BienSo, MauXe, HangSanXuat, DoiXe, Model, SoGhe, SoNamSuDung, Ng
 -- 2. CHÈN DỮ LIỆU BẢNG TAI_XE (15 Tài xế đa dạng bằng lái D, E, FC)
 -- =============================================================================
 INSERT INTO TAI_XE (MaTaiXe, HoTen, CCCD, MaSoBangLai, LoaiBangLai, DiaChi, NgaySinh, ThamNien) VALUES
-(1, 'Nguyễn Văn Hùng', '001085012345', 'B2-987654321001', 'E', 'Quận Cầu Giấy, Hà Nội', '1982-05-14', 18),
-(2, 'Trần Đình Trọng', '001088023456', 'B2-987654321002', 'E', 'Quận Hoàng Mai, Hà Nội', '1985-11-20', 15),
-(3, 'Lê Hoàng Nam', '001090034567', 'B2-987654321003', 'D', 'Quận Đống Đa, Hà Nội', '1990-03-12', 10),
-(4, 'Phạm Quốc Bảo', '079084045678', 'B2-987654321004', 'E', 'Quận 1, TP. Hồ Chí Minh', '1984-08-22', 16),
-(5, 'Võ Minh Trí', '079089056789', 'B2-987654321005', 'E', 'Quận Bình Thạnh, TP. Hồ Chí Minh', '1989-12-05', 11),
-(6, 'Đặng Thái Sơn', '079092067890', 'B2-987654321006', 'D', 'Quận Gò Vấp, TP. Hồ Chí Minh', '1992-07-18', 8),
-(7, 'Hoàng Văn Thắng', '048083078901', 'B2-987654321007', 'E', 'Quận Hải Châu, Đà Nẵng', '1983-04-10', 17),
-(8, 'Bùi Tiến Dũng', '048087089012', 'B2-987654321008', 'D', 'Quận Thanh Khê, Đà Nẵng', '1987-09-30', 12),
-(9, 'Đỗ Mạnh Cường', '022086090123', 'B2-987654321009', 'FC', 'TP. Hạ Long, Quảng Ninh', '1986-06-25', 13),
-(10, 'Ngô Đức Thịnh', '022091101234', 'B2-987654321010', 'D', 'TP. Cẩm Phả, Quảng Ninh', '1991-01-15', 9),
-(11, 'Vũ Thành Long', '038085112345', 'B2-987654321011', 'E', 'TP. Thanh Hóa, Thanh Hóa', '1985-10-08', 14),
-(12, 'Lý Quốc Huy', '038093123456', 'B2-987654321012', 'D', 'Huyện Hoằng Hóa, Thanh Hóa', '1993-02-28', 7),
-(13, 'Dương Đình Nghệ', '001086134567', 'B2-987654321013', 'E', 'Huyện Gia Lâm, Hà Nội', '1986-12-19', 14),
-(14, 'Mai Văn Toàn', '079094145678', 'B2-987654321014', 'D', 'TP. Thủ Đức, TP. Hồ Chí Minh', '1994-08-11', 6),
-(15, 'Trịnh Văn Quyết', '001087156789', 'B2-987654321015', 'E', 'Quận Nam Từ Liêm, Hà Nội', '1987-03-05', 13);
+(1, 'Nguyễn Văn Hùng', '001085012345', 'GPLX-987654321001', 'E', 'Quận Cầu Giấy, Hà Nội', '1982-05-14', 18),
+(2, 'Trần Đình Trọng', '001088023456', 'GPLX-987654321002', 'E', 'Quận Hoàng Mai, Hà Nội', '1985-11-20', 15),
+(3, 'Lê Hoàng Nam', '001090034567', 'GPLX-987654321003', 'D', 'Quận Đống Đa, Hà Nội', '1990-03-12', 10),
+(4, 'Phạm Quốc Bảo', '079084045678', 'GPLX-987654321004', 'E', 'Quận 1, TP. Hồ Chí Minh', '1984-08-22', 16),
+(5, 'Võ Minh Trí', '079089056789', 'GPLX-987654321005', 'E', 'Quận Bình Thạnh, TP. Hồ Chí Minh', '1989-12-05', 11),
+(6, 'Đặng Thái Sơn', '079092067890', 'GPLX-987654321006', 'D', 'Quận Gò Vấp, TP. Hồ Chí Minh', '1992-07-18', 8),
+(7, 'Hoàng Văn Thắng', '048083078901', 'GPLX-987654321007', 'E', 'Quận Hải Châu, Đà Nẵng', '1983-04-10', 17),
+(8, 'Bùi Tiến Dũng', '048087089012', 'GPLX-987654321008', 'D', 'Quận Thanh Khê, Đà Nẵng', '1987-09-30', 12),
+(9, 'Đỗ Mạnh Cường', '022086090123', 'GPLX-987654321009', 'FC', 'TP. Hạ Long, Quảng Ninh', '1986-06-25', 13),
+(10, 'Ngô Đức Thịnh', '022091101234', 'GPLX-987654321010', 'D', 'TP. Cẩm Phả, Quảng Ninh', '1991-01-15', 9),
+(11, 'Vũ Thành Long', '038085112345', 'GPLX-987654321011', 'E', 'TP. Thanh Hóa, Thanh Hóa', '1985-10-08', 14),
+(12, 'Lý Quốc Huy', '038093123456', 'GPLX-987654321012', 'D', 'Huyện Hoằng Hóa, Thanh Hóa', '1993-02-28', 7),
+(13, 'Dương Đình Nghệ', '001086134567', 'GPLX-987654321013', 'E', 'Huyện Gia Lâm, Hà Nội', '1986-12-19', 14),
+(14, 'Mai Văn Toàn', '079094145678', 'GPLX-987654321014', 'D', 'TP. Thủ Đức, TP. Hồ Chí Minh', '1994-08-11', 6),
+(15, 'Trịnh Văn Quyết', '001087156789', 'GPLX-987654321015', 'E', 'Quận Nam Từ Liêm, Hà Nội', '1987-03-05', 13);
 
 -- =============================================================================
 -- 3. CHÈN DỮ LIỆU BẢNG TUYEN_XE (8 Tuyến đường đủ 3 Cấp độ Phức tạp)
@@ -78,7 +78,12 @@ INSERT INTO LICH_SU_BAO_DUONG (BienSoXe, NgayBaoDuong, ChiPhi, NoiDung) VALUES
 ('51B-112.23', '2026-07-10', 9500000.00, 'Bảo dưỡng cấp 3: kiểm tra kim phun, hệ thống treo khí nén'),
 ('51B-456.78', '2026-05-12', 15000000.00, 'Đại tu hệ thống côn, thay bàn ép, láng đĩa phanh'),
 ('43B-012.34', '2025-09-15', 7800000.00, 'Thay dầu cầu, dầu số, bảo dưỡng máy phát điện'),
-('14B-999.88', '2025-10-20', 11200000.00, 'Bảo dưỡng định kỳ động cơ Weichai, thay toàn bộ dầu nhớt');
+('14B-999.88', '2025-10-20', 11200000.00, 'Bảo dưỡng định kỳ động cơ Weichai, thay toàn bộ dầu nhớt'),
+('51B-789.01', '2026-08-25', 4500000.00, 'Bảo dưỡng định kỳ 20,000 km, thay dầu máy và lọc nhớt'),
+('43B-567.89', '2026-09-05', 9000000.00, 'Kiểm tra hệ thống phanh khí nén, thay má phanh trước'),
+('14B-888.66', '2026-09-12', 4200000.00, 'Thay dầu hộp số, kiểm tra hệ thống điện'),
+('36B-333.22', '2026-08-18', 8800000.00, 'Bảo dưỡng điều hòa tổng, vệ sinh dàn lạnh'),
+('36B-777.99', '2026-09-20', 3900000.00, 'Bảo dưỡng định kỳ, đảo lốp, cân bằng động');
 
 -- =============================================================================
 -- 5. CHÈN DỮ LIỆU BẢNG CHUYEN_XE (Hơn 50 chuyến xe thực tế)
@@ -130,8 +135,8 @@ INSERT INTO CHUYEN_XE (MaTuyen, BienSoXe, MaLaiXe, MaPhuXe, ThoiGianKhoiHanh, Th
 -- Chuyến tháng 10 của Tuyến 6
 (6, '29B-266.99', 1, 15, '2026-10-02 21:30:00', '2026-10-03 04:00:00', 32, 400000.00, 'HoanThanh'),
 (6, '29B-266.99', 15, 1, '2026-10-03 13:30:00', '2026-10-03 20:00:00', 30, 400000.00, 'HoanThanh'),
-(6, '14B-999.88', 13, 2, '2026-10-03 22:00:00', '2026-10-04 04:30:00', 34, 400000.00, 'HoanThanh'),
-(6, '14B-999.88', 2, 13, '2026-10-04 13:00:00', '2026-10-04 19:30:00', 33, 400000.00, 'HoanThanh'),
+(6, '14B-999.88', 13, 10, '2026-10-03 22:00:00', '2026-10-04 04:30:00', 34, 400000.00, 'HoanThanh'),
+(6, '14B-999.88', 10, 13, '2026-10-04 13:00:00', '2026-10-04 19:30:00', 33, 400000.00, 'HoanThanh'),
 
 -- Tuyến 7: Hà Nội - Hà Giang (Cấp 3 - Dốc Bắc Sum, Cổng Trời, km=300)
 (7, '29B-188.88', 2, 13, '2026-09-22 20:30:00', '2026-09-23 03:30:00', 42, 350000.00, 'HoanThanh'),

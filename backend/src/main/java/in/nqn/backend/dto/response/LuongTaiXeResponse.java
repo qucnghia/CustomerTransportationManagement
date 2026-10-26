@@ -1,84 +1,23 @@
 package in.nqn.backend.dto.response;
 
-public class LuongTaiXeResponse {
+import java.math.BigDecimal;
 
-    private Integer id;
+// Projection đọc kết quả sp_TinhLuongTaiXeThang / View v_BangLuongTaiXeHienTai
+public interface LuongTaiXeResponse {
 
-    private String hoTen;
+    Integer getMaTaiXe();
 
-    private String loaiBangLai;
+    String getHoTen();
 
-    private Integer thamNien;
+    String getLoaiBangLai();
 
-    private Integer soChuyenLaiChinh;
+    Integer getThamNien();
 
-    private Integer soChuyenPhuXe;
+    Integer getSoChuyenLaiChinh();
 
-    private Integer tongSoChuyen;
+    Integer getSoChuyenPhuXe();
 
-    private Integer tongLuongThang;
+    Integer getTongSoChuyen();
 
-    public Integer getSoChuyenLaiChinh() {
-        return soChuyenLaiChinh;
-    }
-
-    public void setSoChuyenLaiChinh(Integer soChuyenLaiChinh) {
-        this.soChuyenLaiChinh = soChuyenLaiChinh;
-    }
-
-    public Integer getSoChuyenPhuXe() {
-        return soChuyenPhuXe;
-    }
-
-    public void setSoChuyenPhuXe(Integer soChuyenPhuXe) {
-        this.soChuyenPhuXe = soChuyenPhuXe;
-    }
-
-    public Integer getTongSoChuyen() {
-        return tongSoChuyen;
-    }
-
-    public void setTongSoChuyen(Integer tongSoChuyen) {
-        this.tongSoChuyen = tongSoChuyen;
-    }
-
-    public Integer getTongLuongThang() {
-        return tongLuongThang;
-    }
-
-    public void setTongLuongThang(Integer tongLuongThang) {
-        this.tongLuongThang = tongLuongThang;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getHoTen() {
-        return hoTen;
-    }
-
-    public void setHoTen(String hoTen) {
-        this.hoTen = hoTen;
-    }
-
-    public String getLoaiBangLai() {
-        return loaiBangLai;
-    }
-
-    public void setLoaiBangLai(String loaiBangLai) {
-        this.loaiBangLai = loaiBangLai;
-    }
-
-    public Integer getThamNien() {
-        return thamNien;
-    }
-
-    public void setThamNien(Integer thamNien) {
-        this.thamNien = thamNien;
-    }
+    BigDecimal getTongLuongThang();
 }

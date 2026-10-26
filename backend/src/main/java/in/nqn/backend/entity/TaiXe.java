@@ -1,18 +1,13 @@
 package in.nqn.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "TAI_XE")
 public class TaiXe {
     @Id
@@ -20,18 +15,27 @@ public class TaiXe {
     @Column(name = "MaTaiXe")
     private Integer id;
 
+    @NotNull(message = "Họ tên tài xế không được để trống!")
     private String hoTen;
 
+    @NotNull(message = "Căn cước công dân không được để trống!")
     private String cccd;
 
+    @NotNull(message = "Mã số bằng lái không được để trống!")
     private String maSoBangLai;
 
+    @NotNull(message = "Loại bằng lái không được để trống!")
     private String loaiBangLai;
 
+    @NotNull(message = "Địa chỉ không được để trống!")
     private String diaChi;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @NotNull(message = "Ngày sinh không được để trống!")
     private LocalDate ngaySinh;
 
+    @NotNull(message = "Thâm niên không được để trống!")
+    @Min(value = 0,message = "Thâm niên phải lớn hơn hoặc bằng 0!")
     private int thamNien;
 
     public Integer getId() {

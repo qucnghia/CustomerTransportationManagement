@@ -1,31 +1,27 @@
 package in.nqn.backend.dto.request;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
-@Getter
-@Setter
 public class BaoDuongRequest {
-    @NotNull(message = "Mã bảo dưỡng không được để trống")
+    // Không bắt buộc khi tạo mới vì CSDL tự tăng (AUTO_INCREMENT)
     private Integer maBaoDuong;
 
-    @NotNull(message = "Biển số xe không được để trống")
+    @NotBlank(message = "Biển số xe không được để trống")
     private String bienSoXe;
 
     @NotNull(message = "Ngày bảo dưỡng không được để trống")
     private LocalDate ngayBaoDuong;
 
-    @DecimalMin(value = "0.0",message = "Chi phí bảo dưỡng phải >= 0")
+    @DecimalMin(value = "0.0", message = "Chi phí bảo dưỡng phải >= 0")
     private BigDecimal chiPhi;
 
-    @NotNull(message = "Nội dung bảo dưỡng không được để trống")
-    private String message;
+    @NotBlank(message = "Nội dung bảo dưỡng không được để trống")
+    private String noiDung;
 
     public Integer getMaBaoDuong() {
         return maBaoDuong;
@@ -59,11 +55,11 @@ public class BaoDuongRequest {
         this.chiPhi = chiPhi;
     }
 
-    public String getMessage() {
-        return message;
+    public String getNoiDung() {
+        return noiDung;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setNoiDung(String noiDung) {
+        this.noiDung = noiDung;
     }
 }

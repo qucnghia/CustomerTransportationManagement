@@ -2,22 +2,26 @@ package in.nqn.backend.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class XeRequest {
 
-    @NotNull(message = "Màu xe không được để trống")
+    // Bắt buộc khi tạo mới; khi cập nhật lấy từ đường dẫn /api/vehicles/{bienSoXe}
+    private String bienSo;
+
+    @NotBlank(message = "Màu xe không được để trống")
     private String mauxe;
 
-    @NotNull(message = "Hãng sản xuất không được để trống")
+    @NotBlank(message = "Hãng sản xuất không được để trống")
     private String hangSanXuat;
 
     @NotNull(message = "Đời xe không được để trống")
     @Min(value = 1990,message = "Đời xe phải từ năm 1990 trở đi")
     private int doiXe;
 
-    @NotNull(message = "Model xe không được để trống")
+    @NotBlank(message = "Model xe không được để trống")
     private String model;
 
     @NotNull(message = "Số ghế không được để trống")
@@ -25,11 +29,19 @@ public class XeRequest {
     private int soGhe;
 
     @NotNull(message = "Số năm sử dụng không được để trống")
-    @Min(value = 0,message = "Số năm sử dụng phải lớn hơn 0")
+    @Min(value = 0,message = "Số năm sử dụng phải lớn hơn hoặc bằng 0")
     private int soNamSuDung;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate NgayBaoDuongCuoi;
+    private LocalDate ngayBaoDuongCuoi;
+
+    public String getBienSo() {
+        return bienSo;
+    }
+
+    public void setBienSo(String bienSo) {
+        this.bienSo = bienSo;
+    }
 
     public String getMauxe() {
         return mauxe;
@@ -80,10 +92,10 @@ public class XeRequest {
     }
 
     public LocalDate getNgayBaoDuongCuoi() {
-        return NgayBaoDuongCuoi;
+        return ngayBaoDuongCuoi;
     }
 
     public void setNgayBaoDuongCuoi(LocalDate ngayBaoDuongCuoi) {
-        NgayBaoDuongCuoi = ngayBaoDuongCuoi;
+        this.ngayBaoDuongCuoi = ngayBaoDuongCuoi;
     }
 }

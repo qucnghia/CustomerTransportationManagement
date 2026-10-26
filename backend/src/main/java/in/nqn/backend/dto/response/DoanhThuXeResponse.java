@@ -1,74 +1,21 @@
 package in.nqn.backend.dto.response;
 
-public class DoanhThuXeResponse {
+import java.math.BigDecimal;
 
-    private String bienSo;
+// Projection đọc kết quả Stored Procedure sp_BaoCaoDoanhThuTheoXe
+public interface DoanhThuXeResponse {
 
-    private String hangSanXuat;
+    String getBienSo();
 
-    private String model;
+    String getHangSanXuat();
 
-    private int soGhe;
+    String getModel();
 
-    private int tongSoChuyen;
+    Integer getSoGhe();
 
-    private int tongSoKhach;
+    Integer getTongSoChuyen();
 
-    private int tongDoanhThu;
+    Integer getTongSoKhach();
 
-    public String getBienSo() {
-        return bienSo;
-    }
-
-    public void setBienSo(String bienSo) {
-        this.bienSo = bienSo;
-    }
-
-    public String getHangSanXuat() {
-        return hangSanXuat;
-    }
-
-    public void setHangSanXuat(String hangSanXuat) {
-        this.hangSanXuat = hangSanXuat;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public int getSoGhe() {
-        return soGhe;
-    }
-
-    public void setSoGhe(int soGhe) {
-        this.soGhe = soGhe;
-    }
-
-    public int getTongSoChuyen() {
-        return tongSoChuyen;
-    }
-
-    public void setTongSoChuyen(int tongSoChuyen) {
-        this.tongSoChuyen = tongSoChuyen;
-    }
-
-    public int getTongSoKhach() {
-        return tongSoKhach;
-    }
-
-    public void setTongSoKhach(int tongSoKhach) {
-        this.tongSoKhach = tongSoKhach;
-    }
-
-    public int getTongDoanhThu() {
-        return tongDoanhThu;
-    }
-
-    public void setTongDoanhThu(int tongDoanhThu) {
-        this.tongDoanhThu = tongDoanhThu;
-    }
+    BigDecimal getTongDoanhThu();
 }

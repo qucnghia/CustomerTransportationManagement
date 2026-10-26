@@ -1,5 +1,6 @@
 package in.nqn.backend.repository;
 
+import in.nqn.backend.dto.response.LuongTaiXeResponse;
 import in.nqn.backend.entity.TaiXe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,11 +10,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaiXeRepository extends JpaRepository<TaiXe,String> {
+public interface TaiXeRepository extends JpaRepository<TaiXe, Integer> {
 
-    @Query(value = "CALL sp_TinhLuongTaiXeThang(:nam, :thang)",nativeQuery = true)
-    List<Object[]> callSpTinhLuongTaiXeThang(@Param("nam") int nam, @Param("thang") int thang);
+    @Query(value = "CALL sp_TinhLuongTaiXeThang(:nam, :thang)", nativeQuery = true)
+    List<LuongTaiXeResponse> callSpTinhLuongTaiXeThang(@Param("nam") int nam, @Param("thang") int thang);
 
-    @Query(value = "select * from v_BangLuongTaiXeHienTai",nativeQuery = true)
-    List<Object[]> getDanhSachBangLuongTaiXe();
+    @Query(value = "SELECT * FROM v_BangLuongTaiXeHienTai", nativeQuery = true)
+    List<LuongTaiXeResponse> getDanhSachBangLuongTaiXe();
+
+    boolean existsByCccd(String cccd);
+
+    boolean existsByCccdAndIdNot(String cccd, Integer id);
+
+    boolean existsByMaSoBangLai(String maSoBangLai);
+
+    boolean existsByMaSoBangLaiAndIdNot(String maSoBangLai, Integer id);
 }

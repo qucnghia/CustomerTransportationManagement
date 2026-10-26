@@ -4,18 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "XE")
 public class Xe {
     @Id
@@ -40,11 +32,11 @@ public class Xe {
     private int soGhe;
 
     @NotNull(message = "Số năm sử dụng không được để trống")
-    @Min(value = 0,message = "Số năm sử dụng phải lớn hơn 0")
+    @Min(value = 0,message = "Số năm sử dụng phải lớn hơn hoặc bằng 0")
     private int soNamSuDung;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate NgayBaoDuongCuoi;
+    private LocalDate ngayBaoDuongCuoi;
 
     public String getBienSo() {
         return bienSo;
@@ -103,10 +95,10 @@ public class Xe {
     }
 
     public LocalDate getNgayBaoDuongCuoi() {
-        return NgayBaoDuongCuoi;
+        return ngayBaoDuongCuoi;
     }
 
     public void setNgayBaoDuongCuoi(LocalDate ngayBaoDuongCuoi) {
-        NgayBaoDuongCuoi = ngayBaoDuongCuoi;
+        this.ngayBaoDuongCuoi = ngayBaoDuongCuoi;
     }
 }

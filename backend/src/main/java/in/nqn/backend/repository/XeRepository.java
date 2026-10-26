@@ -1,5 +1,6 @@
 package in.nqn.backend.repository;
 
+import in.nqn.backend.dto.response.DoanhThuXeResponse;
 import in.nqn.backend.entity.Xe;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,8 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface XeRepository extends JpaRepository<Xe,String> {
+public interface XeRepository extends JpaRepository<Xe, String> {
 
-    @Query(value = "CALL sp_BaoCaoDoanhThuTheoXe",nativeQuery = true)
-    List<Object[]> callSpBaoCaoDoanhTheoXe(@Param("tuNgay")LocalDate tuNgay, @Param("denNgay") LocalDate denNgay);
+    @Query(value = "CALL sp_BaoCaoDoanhThuTheoXe(:tuNgay, :denNgay)", nativeQuery = true)
+    List<DoanhThuXeResponse> callSpBaoCaoDoanhThuTheoXe(@Param("tuNgay") LocalDate tuNgay, @Param("denNgay") LocalDate denNgay);
 }
