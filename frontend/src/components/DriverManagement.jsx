@@ -3,6 +3,8 @@ import {
   Users, PlusCircle, Search, Trash2, DollarSign, Pencil,
   ArrowDownWideNarrow, ArrowUpNarrowWide 
 } from 'lucide-react';
+import Pagination from './Pagination';
+import { usePagination } from './usePagination';
 import { currentMonthRange } from '../services/api';
 
 export default function DriverManagement({
@@ -43,6 +45,9 @@ export default function DriverManagement({
     return salarySortOrder === 'desc' ? salB - salA : salA - salB;
   });
 
+  const driverPager = usePagination(filteredDrivers, `${searchTerm}|${licenseFilter}`);
+  const salaryPager = usePagination(sortedSalaries, salarySortOrder);
+
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       
@@ -56,9 +61,6 @@ export default function DriverManagement({
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Hồ Sơ Tài Xế & Bảng Tính Lương
           </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1 font-medium">
-            Theo dõi {safeDrivers.length} nhân sự lái chính và phụ xe, bằng lái, thâm niên và thu nhập tháng
-          </p>
         </div>
 
         <button
@@ -66,7 +68,7 @@ export default function DriverManagement({
           className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-bold rounded-xl shadow-md shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap self-start sm:self-auto"
         >
           <PlusCircle className="w-5 h-5" />
-          <span>+ Thêm Tài Xế Mới</span>
+          <span>Thêm Tài Xế Mới</span>
         </button>
       </div>
 
@@ -134,7 +136,7 @@ export default function DriverManagement({
           </div>
 
           {/* Drivers Table */}
-          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+          <div className="scroll-mt-24 bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
@@ -158,7 +160,7 @@ export default function DriverManagement({
                       </td>
                     </tr>
                   ) : (
-                    filteredDrivers.map((driver) => (
+                    driverPager.pageItems.map((driver) => (
                       <tr key={driver.id || driver.maTaiXe} className="hover:bg-slate-50/70 transition-colors">
                         <td className="py-3.5 px-4 font-bold text-slate-400">
                           #{driver.id || driver.maTaiXe}
@@ -213,6 +215,8 @@ export default function DriverManagement({
               </table>
             </div>
           </div>
+
+          <Pagination pager={driverPager} unit="tài xế" label="Phân trang tài xế" />
         </>
       ) : (
         /* Driver Salaries Tab with Clickable Sort on Salary */
@@ -231,7 +235,7 @@ export default function DriverManagement({
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="scroll-mt-24 overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -258,7 +262,9 @@ export default function DriverManagement({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {sortedSalaries.map((sal, idx) => (
+                {salaryPager.pageItems.map((sal, i) => {
+                  const idx = salaryPager.firstIndex + i; // thứ hạng trên toàn bảng, không chỉ trong trang
+                  return (
                   <tr key={sal.maTaiXe} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-3.5 px-4">
                       <span className={`w-7 h-7 rounded-full flex items-center justify-center font-black text-xs ${
@@ -294,10 +300,13 @@ export default function DriverManagement({
                       {formatMoney(sal.tongLuongThang)}
                     </td>
                   </tr>
-                ))}
+                );
+                })}
               </tbody>
             </table>
           </div>
+
+          <Pagination pager={salaryPager} unit="tài xế" label="Phân trang bảng lương" />
         </div>
       )}
 

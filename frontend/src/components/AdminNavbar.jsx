@@ -1,4 +1,4 @@
-import { Bus, Bell, Menu } from 'lucide-react';
+import { Bell, Menu } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export default function AdminNavbar({ 
@@ -26,13 +26,11 @@ export default function AdminNavbar({
 
             {/* Logo & Brand */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-sm shadow-blue-500/20">
-                <Bus className="w-5 h-5 text-white" />
-              </div>
+              <img src="/favicon.svg" alt="" className="w-10 h-10 shrink-0 rounded-xl shadow-md shadow-blue-500/25" />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-slate-900 tracking-tight text-lg sm:text-xl">
-                    TRANS-OPS
+                  <span className="font-black text-slate-900 tracking-tight text-base sm:text-xl">
+                    Hệ thống quản lý xe khách
                   </span>
                   <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[11px] font-black uppercase tracking-wider">
                     Admin

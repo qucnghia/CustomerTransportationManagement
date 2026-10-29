@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarClock, CalendarDays, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
 
 const WEEKDAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 const POPOVER_HEIGHT = 380;
+const TIME_ROW_HEIGHT = 56;
+const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0'));
+const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
 
 const pad = (n) => String(n).padStart(2, '0');
 const toIso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
@@ -16,12 +19,17 @@ const parseIso = (s) => {
 
 // Lịch chọn ngày thay cho <input type="date"> (bảng lịch gốc của trình duyệt không chỉnh giao diện được).
 // value / min / max dạng "yyyy-MM-dd", onChange(value) trả về chuỗi cùng định dạng ('' khi xóa).
+// withTime: thay cho <input type="datetime-local">, value dạng "yyyy-MM-ddTHH:mm" (min / max vẫn so theo ngày).
 export default function DatePicker({
   value = '', onChange, required = false, min, max, minYear = 1940, maxYear,
-  placeholder = 'dd/mm/yyyy', className = '', id
+  placeholder, className = '', id, withTime = false, defaultTime = '07:00'
 }) {
+  const datePart = value.slice(0, 10);
+  const timePart = withTime ? (value.slice(11, 16) || defaultTime) : '';
+  const emit = (date, time = timePart) => onChange(withTime && date ? `${date}T${time}` : date);
+
   const [open, setOpen] = useState(false);
-  const [view, setView] = useState(() => parseIso(value) ?? parseIso(todayIso()));
+  const [view, setView] = useState(() => parseIso(datePart) ?? parseIso(todayIso()));
   const [pos, setPos] = useState(null);
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
@@ -33,9 +41,10 @@ export default function DatePicker({
   // Popover dùng position: fixed, lật lên trên khi phía dưới không đủ chỗ
   const openPicker = () => {
     const r = triggerRef.current.getBoundingClientRect();
-    const below = window.innerHeight - r.bottom > POPOVER_HEIGHT;
-    setPos({ left: Math.min(r.left, window.innerWidth - 296), top: below ? r.bottom + 6 : Math.max(8, r.top - POPOVER_HEIGHT - 6) });
-    setView(parseIso(value) ?? parseIso(todayIso()));
+    const height = POPOVER_HEIGHT + (withTime ? TIME_ROW_HEIGHT : 0);
+    const below = window.innerHeight - r.bottom > height;
+    setPos({ left: Math.min(r.left, window.innerWidth - 296), top: below ? r.bottom + 6 : Math.max(8, r.top - height - 6) });
+    setView(parseIso(datePart) ?? parseIso(todayIso()));
     setOpen(true);
   };
 
@@ -72,10 +81,15 @@ export default function DatePicker({
     };
   }, [open]);
 
+  // Chế độ có giờ: chọn ngày xong vẫn mở để chỉnh giờ, đóng bằng nút "Xong"
   const pick = (iso) => {
-    onChange(iso);
-    close(true);
+    emit(iso);
+    if (!withTime || !iso) close(true);
   };
+
+  const setTime = (hh, mm) => emit(datePart || todayIso(), `${hh}:${mm}`);
+  const [hour, minute] = (timePart || ':').split(':');
+  const minuteOptions = MINUTES.includes(minute) || !minute ? MINUTES : [...MINUTES, minute].sort();
 
   const shiftMonth = (delta) => {
     const d = new Date(view.y, view.m + delta, 1);
@@ -92,7 +106,8 @@ export default function DatePicker({
   });
 
   const today = todayIso();
-  const display = value ? value.split('-').reverse().join('/') : '';
+  const display = datePart ? datePart.split('-').reverse().join('/') + (withTime ? ` · ${timePart}` : '') : '';
+  const TriggerIcon = withTime ? CalendarClock : CalendarDays;
   const navBtn = 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer';
   const selectCls = 'px-2 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-sm font-bold text-slate-800 cursor-pointer focus:outline-none focus:border-blue-500';
 
@@ -107,8 +122,8 @@ export default function DatePicker({
         aria-expanded={open}
         className={`${className} flex items-center justify-between gap-2 text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40`}
       >
-        <span className={display ? '' : 'text-slate-400 font-medium'}>{display || placeholder}</span>
-        <CalendarDays className="w-4 h-4 shrink-0 text-slate-400" />
+        <span className={`truncate ${display ? '' : 'text-slate-400 font-medium'}`}>{display || placeholder || (withTime ? 'dd/mm/yyyy · --:--' : 'dd/mm/yyyy')}</span>
+        <TriggerIcon className="w-4 h-4 shrink-0 text-slate-400" />
       </button>
 
       {/* Ô ẩn để form vẫn báo "bắt buộc" theo cơ chế kiểm tra gốc của trình duyệt */}
@@ -127,7 +142,7 @@ export default function DatePicker({
         <div
           ref={popoverRef}
           role="dialog"
-          aria-label="Chọn ngày"
+          aria-label={withTime ? 'Chọn ngày giờ' : 'Chọn ngày'}
           style={{ left: pos.left, top: pos.top }}
           className="fixed z-[60] w-72 p-3 rounded-2xl bg-white border border-slate-200 shadow-2xl shadow-slate-900/20"
         >
@@ -155,7 +170,7 @@ export default function DatePicker({
 
           <div className="grid grid-cols-7 gap-0.5">
             {cells.map(({ iso, day, inMonth }) => {
-              const selected = iso === value;
+              const selected = iso === datePart;
               const isToday = iso === today;
               const disabled = isDisabled(iso);
               return (
@@ -181,6 +196,20 @@ export default function DatePicker({
             })}
           </div>
 
+          {withTime && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100">
+              <Clock className="w-4 h-4 text-slate-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 mr-auto">Giờ</span>
+              <select aria-label="Giờ" value={hour} onChange={(e) => setTime(e.target.value, minute)} className={selectCls}>
+                {HOURS.map(h => <option key={h} value={h}>{h}</option>)}
+              </select>
+              <span className="font-black text-slate-400">:</span>
+              <select aria-label="Phút" value={minute} onChange={(e) => setTime(hour, e.target.value)} className={selectCls}>
+                {minuteOptions.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
             <button
               type="button"
@@ -190,7 +219,16 @@ export default function DatePicker({
             >
               Hôm nay
             </button>
-            {!required && value && (
+            {withTime && (
+              <button
+                type="button"
+                onClick={() => close(true)}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+              >
+                Xong
+              </button>
+            )}
+            {!withTime && !required && value && (
               <button
                 type="button"
                 onClick={() => pick('')}

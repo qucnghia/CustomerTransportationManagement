@@ -201,3 +201,13 @@
   :where(.dark) .text-rose-100 { color: #ffe4e6; }
   :where(.dark) .text-orange-200 { color: #fed7aa; }
 }
+
+/* Hiệu ứng đổi số trên thẻ tài chính luân phiên (FinanceSummary.jsx) */
+@keyframes financeSwap {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.finance-swap { animation: financeSwap 0.45s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .finance-swap { animation: none; }
+}

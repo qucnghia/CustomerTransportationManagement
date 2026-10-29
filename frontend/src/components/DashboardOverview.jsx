@@ -21,11 +21,10 @@ export default function DashboardOverview({
   const activeTripsCount = trips.filter(t => t.trangThaiChuyen === 'Đang chạy' || t.trangThai === 'DangChay').length;
   const scheduledTripsCount = trips.filter(t => t.trangThaiChuyen === 'Sắp khởi hành' || t.trangThaiChuyen === 'Đang mở bán' || t.trangThai === 'DaLenLich').length;
   
-  // Calculate total revenue from completed trips
-  const estimatedRevenue = trips.reduce((sum, t) => {
-    const rev = (Number(t.soKhach) || 0) * (Number(t.giaVe) || 0);
-    return sum + rev;
-  }, 0);
+  // Doanh thu = số khách × giá vé của các chuyến không bị hủy (cùng quy tắc sp_BaoCaoDoanhThuTheoXe)
+  const estimatedRevenue = trips
+    .filter(t => t.trangThai !== 'Huy')
+    .reduce((sum, t) => sum + (Number(t.soKhach) || 0) * (Number(t.giaVe) || 0), 0);
 
   const overdueCount = overdueVehicles.length;
 

@@ -132,6 +132,8 @@ export const api = {
     list(`/api/vehicles/revenues?tuNgay=${tuNgay}&denNgay=${denNgay}`, normalizeRevenue),
   getSalaries: (nam = currentMonthRange().nam, thang = currentMonthRange().thang) =>
     list(`/api/drivers/salaries?nam=${nam}&thang=${thang}`, normalizeSalary),
+  getSalariesInRange: (tuNgay, denNgay) =>
+    list(`/api/drivers/salaries?tuNgay=${tuNgay}&denNgay=${denNgay}`, normalizeSalary),
   getAllVehicles: () => list('/api/vehicles'),
   getAllDrivers: () => list('/api/drivers'),
 
@@ -149,7 +151,8 @@ export const api = {
 
   createTrip: (data) => request('/api/trips', { method: 'POST', body: data }),
   updateTrip: (id, data) => request(`/api/trips/${id}`, { method: 'PUT', body: data }),
-  deleteTrip: (id) => request(`/api/trips/${id}`, { method: 'DELETE' }),
+  cancelTrip: (id) => request(`/api/trips/${id}/cancel`, { method: 'PUT' }),
+  advanceTripStatus: (id) => request(`/api/trips/${id}/next-status`, { method: 'PUT' }),
 
   confirmMaintenance: ({ bienSoXe, ngayBaoDuong, chiPhi, noiDung }) =>
     request('/api/maintenances', {

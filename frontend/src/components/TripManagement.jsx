@@ -1,13 +1,59 @@
 import { useState } from 'react';
 import { 
-  CalendarRange, Filter, Search, PlusCircle, Trash2, Pencil
+  CalendarRange, Filter, Search, PlusCircle, Pencil, ChevronRight, Ban
 } from 'lucide-react';
+import Pagination from './Pagination';
+import { usePagination } from './usePagination';
+
+const STATUS_STYLE = {
+  DaLenLich: 'bg-amber-100 text-amber-700',
+  DangChay: 'bg-blue-100 text-blue-700',
+  HoanThanh: 'bg-emerald-100 text-emerald-700',
+  Huy: 'bg-rose-100 text-rose-700'
+};
+// Bước kế tiếp được phép (một chiều, không lùi lại)
+const NEXT_STATUS = { DaLenLich: 'Đang chạy', DangChay: 'Hoàn thành' };
+
+// Nhãn trạng thái; với chuyến chưa xong thì là nút bấm chuyển sang bước kế tiếp,
+// chuyến sắp khởi hành có thêm nút Hủy bên cạnh
+function StatusBadge({ trip, onAdvance, onCancel }) {
+  const base = `inline-flex items-center gap-1 whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold ${STATUS_STYLE[trip.trangThai] ?? 'bg-slate-100 text-slate-600'}`;
+  const next = NEXT_STATUS[trip.trangThai];
+  if (!next || !onAdvance) return <span className={base}>{trip.trangThaiChuyen}</span>;
+  const advance = (
+    <button
+      type="button"
+      onClick={() => onAdvance(trip)}
+      title={`Bấm để chuyển sang "${next}" (không thể hoàn tác)`}
+      className={`${base} group cursor-pointer ring-1 ring-inset ring-current/20 hover:ring-current/60 transition-shadow`}
+    >
+      <span>{trip.trangThaiChuyen}</span>
+      <ChevronRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+    </button>
+  );
+  if (trip.trangThai !== 'DaLenLich' || !onCancel) return advance;
+  return (
+    <div className="flex items-center gap-1.5">
+      {advance}
+      <button
+        type="button"
+        onClick={() => onCancel(trip)}
+        title="Hủy chuyến (giữ lại thông tin, không tính doanh thu, lương, km)"
+        className="inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-bold text-rose-600 ring-1 ring-inset ring-rose-200 hover:bg-rose-50 hover:ring-rose-400 cursor-pointer transition-colors"
+      >
+        <Ban className="w-3.5 h-3.5" />
+        <span>Hủy</span>
+      </button>
+    </div>
+  );
+}
 
 export default function TripManagement({ 
   trips = [], 
   onOpenCreate,
   onEditTrip,
-  onDeleteTrip
+  onAdvanceStatus,
+  onCancelTrip
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -33,6 +79,9 @@ export default function TripManagement({
     return matchSearch && matchStatus;
   });
 
+  const pager = usePagination(filteredTrips, `${searchTerm}|${statusFilter}`);
+  const pageTrips = pager.pageItems;
+
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       
@@ -46,9 +95,6 @@ export default function TripManagement({
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Quản Lý Lịch Trình Chuyến Xe
           </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1 font-medium">
-            Theo dõi {safeTrips.length} chuyến xe, phân công lái xe chính, phụ xe và kiểm soát doanh thu
-          </p>
         </div>
 
         {/* Action Button */}
@@ -57,7 +103,7 @@ export default function TripManagement({
           className="px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold rounded-xl shadow-md shadow-blue-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap self-start sm:self-auto"
         >
           <PlusCircle className="w-5 h-5" />
-          <span>+ Điều Phối Chuyến Xe Mới</span>
+          <span>Điều Phối Chuyến Xe Mới</span>
         </button>
       </div>
 
@@ -115,6 +161,7 @@ export default function TripManagement({
       </div>
 
       {/* Main Content: Table View */}
+      <div className="scroll-mt-24">
       {viewMode === 'table' ? (
         <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
@@ -142,7 +189,7 @@ export default function TripManagement({
                     </td>
                   </tr>
                 ) : (
-                  filteredTrips.map((trip) => {
+                  pageTrips.map((trip) => {
                     const pax = Number(trip.soKhach || 0);
                     const seats = trip.soGhe;
                     const fare = Number(trip.giaVe || 0);
@@ -180,38 +227,22 @@ export default function TripManagement({
                           {formatMoney(fare)}
                         </td>
                         <td className="py-3.5 px-4 font-black text-blue-700 text-sm sm:text-base">
-                          {formatMoney(tripRev)}
+                          {/* Chuyến đã hủy không tính doanh thu: gạch ngang để vẫn xem được số vé đã bán */}
+                          <span className={trip.trangThai === 'Huy' ? 'line-through text-slate-400 font-semibold' : ''}>{formatMoney(tripRev)}</span>
                         </td>
                         <td className="py-3.5 px-4">
-                          <span className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold ${
-                            trip.trangThaiChuyen === 'Đang chạy'
-                              ? 'bg-blue-100 text-blue-700'
-                              : trip.trangThaiChuyen === 'Hoàn thành'
-                              ? 'bg-emerald-100 text-emerald-700'
-                              : trip.trangThaiChuyen === 'Hủy' || trip.trangThaiChuyen === 'Đã hủy'
-                              ? 'bg-rose-100 text-rose-700'
-                              : 'bg-amber-100 text-amber-700'
-                          }`}>
-                            {trip.trangThaiChuyen}
-                          </span>
+                          <StatusBadge trip={trip} onAdvance={onAdvanceStatus} onCancel={onCancelTrip} />
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           {onEditTrip && (
                             <button
                               onClick={() => onEditTrip(trip)}
-                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer"
-                              title="Sửa chuyến xe"
+                              disabled={trip.trangThai === 'HoanThanh' || trip.trangThai === 'Huy'}
+                              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-slate-400"
+                              title={trip.trangThai === 'HoanThanh' ? 'Chuyến đã hoàn thành, không thể sửa'
+                                : trip.trangThai === 'Huy' ? 'Chuyến đã hủy, không thể sửa' : 'Sửa chuyến xe'}
                             >
                               <Pencil className="w-4 h-4" />
-                            </button>
-                          )}
-                          {onDeleteTrip && (
-                            <button
-                              onClick={() => onDeleteTrip(trip.maChuyen)}
-                              className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                              title="Hủy/Xóa chuyến"
-                            >
-                              <Trash2 className="w-4 h-4" />
                             </button>
                           )}
                         </td>
@@ -226,7 +257,7 @@ export default function TripManagement({
       ) : (
         /* Cards View */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTrips.map((trip) => {
+          {pageTrips.map((trip) => {
             const pax = Number(trip.soKhach || 0);
             const seats = trip.soGhe;
             const fare = Number(trip.giaVe || 0);
@@ -241,15 +272,7 @@ export default function TripManagement({
                 <div>
                   <div className="flex items-center justify-between mb-3.5">
                     <span className="text-sm font-bold text-slate-400">#{trip.maChuyen}</span>
-                    <span className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold ${
-                      trip.trangThaiChuyen === 'Đang chạy'
-                        ? 'bg-blue-100 text-blue-700'
-                        : trip.trangThaiChuyen === 'Hoàn thành'
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-amber-100 text-amber-700'
-                    }`}>
-                      {trip.trangThaiChuyen}
-                    </span>
+                    <StatusBadge trip={trip} onAdvance={onAdvanceStatus} onCancel={onCancelTrip} />
                   </div>
 
                   <h2 className="font-black text-slate-900 text-base mb-3 leading-snug">
@@ -293,7 +316,7 @@ export default function TripManagement({
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                   <div>
                     <span className="text-xs font-bold text-slate-400 uppercase block">Doanh Thu Chuyến</span>
-                    <span className="font-black text-base sm:text-lg text-blue-700">{formatMoney(tripRev)}</span>
+                    <span className={`font-black text-base sm:text-lg ${trip.trangThai === 'Huy' ? 'line-through text-slate-400' : 'text-blue-700'}`}>{formatMoney(tripRev)}</span>
                   </div>
                   <span className="text-sm font-bold text-slate-600">
                     {formatMoney(fare)} / khách
@@ -304,6 +327,9 @@ export default function TripManagement({
           })}
         </div>
       )}
+      </div>
+
+      <Pagination pager={pager} unit="chuyến" label="Phân trang chuyến xe" />
 
     </div>
   );

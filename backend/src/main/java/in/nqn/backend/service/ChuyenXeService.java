@@ -19,6 +19,11 @@ import java.util.Set;
 public class ChuyenXeService {
 
     private static final Set<String> TRANG_THAI_HOP_LE = Set.of("DaLenLich", "DangChay", "HoanThanh", "Huy");
+    // Tiến trình một chiều của chuyến xe, không được lùi lại
+    private static final List<String> TIEN_TRINH = List.of("DaLenLich", "DangChay", "HoanThanh");
+    private static final String HOAN_THANH = "HoanThanh";
+    private static final String DA_LEN_LICH = "DaLenLich";
+    private static final String HUY = "Huy";
 
     private final ChuyenXeRepository chuyenXeRepository;
     private final XeRepository xeRepository;
@@ -55,14 +60,41 @@ public class ChuyenXeService {
     }
 
     public ChuyenXe updateChuyenXe(Integer id, ChuyenXeRequest request) {
-        return chuyenXeRepository.save(applyRequest(getChuyenXeById(id), request));
+        ChuyenXe existing = getChuyenXeById(id);
+        if (HOAN_THANH.equals(existing.getTrangThai())) {
+            throw new IllegalArgumentException("Chuyến xe #" + id + " đã hoàn thành, không được phép sửa!");
+        }
+        if (HUY.equals(existing.getTrangThai())) {
+            throw new IllegalArgumentException("Chuyến xe #" + id + " đã bị hủy, không được phép sửa!");
+        }
+        int hienTai = TIEN_TRINH.indexOf(existing.getTrangThai());
+        int moi = TIEN_TRINH.indexOf(request.getTrangThai());
+        if (moi >= 0 && moi < hienTai) {
+            throw new IllegalArgumentException("Không được chuyển trạng thái chuyến xe ngược lại!");
+        }
+        return chuyenXeRepository.save(applyRequest(existing, request));
     }
 
-    public void deleteChuyenXe(Integer id) {
-        if (!chuyenXeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Chuyến xe với mã " + id + " không tồn tại!");
+    // Hủy chuyến chưa khởi hành: giữ lại bản ghi, trạng thái Huy làm doanh thu, lương, km quy đổi
+    // và kiểm tra trùng lịch đều bỏ qua chuyến này (xem các view/thủ tục trong 04_views_and_procedures.sql)
+    public ChuyenXe huyChuyenXe(Integer id) {
+        ChuyenXe chuyenXe = getChuyenXeById(id);
+        if (!DA_LEN_LICH.equals(chuyenXe.getTrangThai())) {
+            throw new IllegalArgumentException("Chỉ hủy được chuyến xe đang ở trạng thái Sắp khởi hành!");
         }
-        chuyenXeRepository.deleteById(id);
+        chuyenXe.setTrangThai(HUY);
+        return chuyenXeRepository.save(chuyenXe);
+    }
+
+    // Chuyển chuyến xe sang bước kế tiếp: Đã lên lịch -> Đang chạy -> Hoàn thành
+    public ChuyenXe chuyenTrangThaiTiepTheo(Integer id) {
+        ChuyenXe chuyenXe = getChuyenXeById(id);
+        int hienTai = TIEN_TRINH.indexOf(chuyenXe.getTrangThai());
+        if (hienTai < 0 || hienTai == TIEN_TRINH.size() - 1) {
+            throw new IllegalArgumentException("Chuyến xe #" + id + " không thể chuyển sang trạng thái tiếp theo!");
+        }
+        chuyenXe.setTrangThai(TIEN_TRINH.get(hienTai + 1));
+        return chuyenXeRepository.save(chuyenXe);
     }
 
     // Kiểm tra các ràng buộc nghiệp vụ cốt lõi rồi gán dữ liệu từ request vào entity

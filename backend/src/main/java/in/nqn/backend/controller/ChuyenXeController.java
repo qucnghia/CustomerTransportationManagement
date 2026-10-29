@@ -53,10 +53,19 @@ public class ChuyenXeController {
         return ResponseEntity.ok(ApiResponse.success(updated, "Cập nhật chuyến xe thành công!"));
     }
 
-    // 5. Xóa/Hủy chuyến xe
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTrip(@PathVariable Integer id) {
-        chuyenXeService.deleteChuyenXe(id);
-        return ResponseEntity.ok(ApiResponse.success(null, "Xóa chuyến xe thành công!"));
+    // Chuyển trạng thái một chiều: Đã lên lịch -> Đang chạy -> Hoàn thành
+    @PutMapping("/{id}/next-status")
+    public ResponseEntity<ApiResponse<ChuyenXe>> advanceTripStatus(@PathVariable Integer id) {
+        ChuyenXe updated = chuyenXeService.chuyenTrangThaiTiepTheo(id);
+        return ResponseEntity.ok(ApiResponse.success(updated, "Đã chuyển chuyến xe #" + id + " sang trạng thái tiếp theo!"));
     }
+
+    // Hủy chuyến sắp khởi hành (giữ lại thông tin chuyến, không tính doanh thu / lương / km)
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<ChuyenXe>> cancelTrip(@PathVariable Integer id) {
+        ChuyenXe cancelled = chuyenXeService.huyChuyenXe(id);
+        return ResponseEntity.ok(ApiResponse.success(cancelled, "Đã hủy chuyến xe #" + id + "!"));
+    }
+
+    // Không có API xóa: lịch sử chuyến xe được giữ lại vĩnh viễn, muốn bỏ chuyến thì dùng /cancel
 }
