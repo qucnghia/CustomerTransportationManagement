@@ -55,7 +55,7 @@ export default function CreateEntityModal({
 
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-orange-200 mb-1">
             {isEdit ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-            <span>Phân Hệ Quản Trị Dữ Liệu VietBus Transit</span>
+            <span>Hệ Thống Quản Lý Xe Khách</span>
           </div>
 
           <h3 className="text-2xl font-black">{isEdit ? tab.editLabel : 'Thêm Dữ Liệu Nghiệp Vụ'}</h3>

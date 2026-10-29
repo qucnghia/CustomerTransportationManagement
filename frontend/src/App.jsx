@@ -11,6 +11,7 @@ import MaintenanceManagement from './components/MaintenanceManagement';
 import ReportManagement from './components/ReportManagement';
 import CreateEntityModal from './components/CreateEntityModal';
 import ConfirmMaintenanceModal from './components/ConfirmMaintenanceModal';
+import ConfirmDialog from './components/ConfirmDialog';
 import { api } from './services/api';
 
 const EMPTY_DATA = {
@@ -51,6 +52,7 @@ export default function App() {
   // Modal thêm / sửa: null = đóng; key đổi mỗi lần mở để form khởi tạo lại
   const [entityModal, setEntityModal] = useState(null);
   const [vehicleToConfirm, setVehicleToConfirm] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const applyData = useCallback(({ loaded, firstError }) => {
@@ -65,20 +67,43 @@ export default function App() {
 
   const openEntityModal = (tab = 'trip', entity = null) => setEntityModal({ tab, entity, key: Date.now() });
 
-  const deleteWithConfirm = async (question, action) => {
-    if (!window.confirm(question)) return;
-    try {
+  const closeConfirm = useCallback(() => setConfirmDialog(null), []);
+
+  // Mở popup xác nhận; thao tác chạy khi người dùng bấm xác nhận, xong thì tải lại dữ liệu
+  const askConfirm = (options, action) => setConfirmDialog({
+    ...options,
+    onConfirm: async () => {
       await action();
+      await loadAllData();
+    }
+  });
+  const deleteWithConfirm = (title, action) =>
+    askConfirm({ title, message: 'Dữ liệu sẽ bị xóa vĩnh viễn và không thể hoàn tác.', confirmLabel: 'Xóa' }, action);
+
+  const handleAdvanceTrip = async (trip) => {
+    try {
+      await api.advanceTripStatus(trip.maChuyen);
       await loadAllData();
     } catch (err) {
       alert(err.message);
     }
   };
 
-  const handleDeleteTrip = (id) => deleteWithConfirm(`Xác nhận xóa chuyến xe #${id}?`, () => api.deleteTrip(id));
-  const handleDeleteVehicle = (bienSo) => deleteWithConfirm(`Xác nhận xóa phương tiện ${bienSo}?`, () => api.deleteVehicle(bienSo));
-  const handleDeleteDriver = (id) => deleteWithConfirm(`Xác nhận xóa hồ sơ tài xế #${id}?`, () => api.deleteDriver(id));
-  const handleDeleteRoute = (id) => deleteWithConfirm(`Xác nhận xóa tuyến đường #${id}?`, () => api.deleteRoute(id));
+  const handleCancelTrip = (trip) => askConfirm({
+    title: `Hủy chuyến xe #${trip.maChuyen}?`,
+    message: 'Thông tin chuyến vẫn được lưu lại nhưng không tính vào doanh thu, lương tài xế và km bảo dưỡng. Không thể hoàn tác.',
+    details: [
+      ['Tuyến', trip.tenTuyen],
+      ['Xe', trip.bienSoXe],
+      ['Khởi hành', String(trip.thoiGianKhoiHanh).slice(0, 16)],
+      ['Số khách', trip.soKhach]
+    ],
+    confirmLabel: 'Hủy chuyến'
+  }, () => api.cancelTrip(trip.maChuyen));
+
+  const handleDeleteVehicle = (bienSo) => deleteWithConfirm(`Xóa phương tiện ${bienSo}?`, () => api.deleteVehicle(bienSo));
+  const handleDeleteDriver = (id) => deleteWithConfirm(`Xóa hồ sơ tài xế #${id}?`, () => api.deleteDriver(id));
+  const handleDeleteRoute = (id) => deleteWithConfirm(`Xóa tuyến đường #${id}?`, () => api.deleteRoute(id));
 
   return (
     <div className="min-h-screen bg-slate-100/70 text-slate-900 flex flex-col font-sans">
@@ -127,7 +152,8 @@ export default function App() {
               trips={data.trips}
               onOpenCreate={openEntityModal}
               onEditTrip={(trip) => openEntityModal('trip', trip)}
-              onDeleteTrip={handleDeleteTrip}
+              onAdvanceStatus={handleAdvanceTrip}
+              onCancelTrip={handleCancelTrip}
             />
           )}
 
@@ -174,6 +200,8 @@ export default function App() {
             <ReportManagement
               initialRevenues={data.revenues}
               initialSalaries={data.salaries}
+              maintenanceHistory={data.history}
+              trips={data.trips}
             />
           )}
 
@@ -213,6 +241,10 @@ export default function App() {
           drivers={data.drivers}
           onSaved={loadAllData}
         />
+      )}
+
+      {confirmDialog && (
+        <ConfirmDialog {...confirmDialog} onClose={closeConfirm} />
       )}
 
     </div>

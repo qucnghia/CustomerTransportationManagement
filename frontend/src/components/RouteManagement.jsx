@@ -3,6 +3,8 @@ import {
   MapPin, PlusCircle, Search, Mountain, TrendingUp,
   Trees, Trash2, Pencil
 } from 'lucide-react';
+import Pagination from './Pagination';
+import { usePagination } from './usePagination';
 
 export default function RouteManagement({
   routes = [],
@@ -20,6 +22,8 @@ export default function RouteManagement({
     const q = searchTerm.toLowerCase().trim();
     return !q || name.includes(q);
   });
+
+  const pager = usePagination(filteredRoutes, searchTerm);
 
   const getTerrainBadge = (complexity) => {
     const comp = Number(complexity || 1);
@@ -59,9 +63,6 @@ export default function RouteManagement({
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Mạng Lưới Tuyến Xe Liên Tỉnh
           </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1 font-medium">
-            Theo dõi {safeRoutes.length} tuyến vận chuyển, khoảng cách cự ly và hệ số phức tạp địa hình
-          </p>
         </div>
 
         <button
@@ -69,7 +70,7 @@ export default function RouteManagement({
           className="px-5 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-sm font-bold rounded-xl shadow-md shadow-purple-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap self-start sm:self-auto"
         >
           <PlusCircle className="w-5 h-5" />
-          <span>+ Thêm Tuyến Đường Mới</span>
+          <span>Thêm Tuyến Đường Mới</span>
         </button>
       </div>
 
@@ -104,7 +105,7 @@ export default function RouteManagement({
       </div>
 
       {/* Routes Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+      <div className="scroll-mt-24 bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
@@ -126,7 +127,7 @@ export default function RouteManagement({
                   </td>
                 </tr>
               ) : (
-                filteredRoutes.map((route) => {
+                pager.pageItems.map((route) => {
                   const dist = route.quangDuongKm;
 
                   return (
@@ -177,6 +178,8 @@ export default function RouteManagement({
           </table>
         </div>
       </div>
+
+      <Pagination pager={pager} unit="tuyến" label="Phân trang tuyến đường" />
 
     </div>
   );

@@ -6,6 +6,7 @@ import in.nqn.backend.dto.response.LuongTaiXeResponse;
 import in.nqn.backend.entity.TaiXe;
 import in.nqn.backend.service.TaiXeService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,11 +37,18 @@ public class TaiXeController {
         return ResponseEntity.ok(ApiResponse.success(taiXeService.getAllTaiXe(), "Lấy danh sách tài xế thành công!"));
     }
 
-    // Mặc định: tháng hiện tại
+    // Theo khoảng ngày khi có tuNgay & denNgay (vd ?tuNgay=2026-10-01&denNgay=2026-10-15),
+    // ngược lại theo tháng (?nam=&thang=, mặc định tháng hiện tại)
     @GetMapping("/salaries")
     public ResponseEntity<ApiResponse<List<LuongTaiXeResponse>>> getLuongTaiXeTheoThang(
             @RequestParam(name = "nam", required = false) Integer nam,
-            @RequestParam(name = "thang", required = false) Integer thang) {
+            @RequestParam(name = "thang", required = false) Integer thang,
+            @RequestParam(name = "tuNgay", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tuNgay,
+            @RequestParam(name = "denNgay", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate denNgay) {
+        if (tuNgay != null && denNgay != null) {
+            return ResponseEntity.ok(ApiResponse.success(taiXeService.getLuongTaiXeTheoKhoang(tuNgay, denNgay),
+                    "Lấy bảng lương tài xế từ " + tuNgay + " đến " + denNgay + " thành công!"));
+        }
         LocalDate today = LocalDate.now();
         int y = nam != null ? nam : today.getYear();
         int m = thang != null ? thang : today.getMonthValue();

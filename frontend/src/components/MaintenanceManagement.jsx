@@ -3,7 +3,10 @@ import {
   Wrench, ShieldCheck, AlertTriangle,
   CheckCircle2, Gauge, History
 } from 'lucide-react';
+import Pagination from './Pagination';
+import { usePagination } from './usePagination';
 import ConfirmMaintenanceModal from './ConfirmMaintenanceModal';
+import { MISSING } from '../services/api';
 
 export default function MaintenanceManagement({
   overdueVehicles = [],
@@ -21,6 +24,9 @@ export default function MaintenanceManagement({
   const handleOpenConfirm = (vehicle) => setSelectedVehicleToConfirm(vehicle);
 
   const overdueCount = overdueVehicles.length;
+
+  const safePager = usePagination(safeVehicles);
+  const historyPager = usePagination(maintenanceHistory);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
@@ -244,7 +250,7 @@ export default function MaintenanceManagement({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {safeVehicles.map((v) => {
+                {safePager.pageItems.map((v) => {
                   const daysLeft = Number(v.soNgayConLai || 0);
 
                   return (
@@ -285,6 +291,7 @@ export default function MaintenanceManagement({
               </tbody>
             </table>
           </div>
+          <Pagination pager={safePager} unit="xe" label="Phân trang xe an toàn" className="p-4 border-t border-slate-100" />
         </div>
       )}
 
@@ -310,9 +317,9 @@ export default function MaintenanceManagement({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {maintenanceHistory.map((item) => {
-                  const plate = item.xe?.bienSo || item.bienSoXe || '29B-000.00';
-                  const model = item.xe?.model || item.xe?.hangSanXuat || 'Xe khách';
+                {historyPager.pageItems.map((item) => {
+                  const plate = item.xe?.bienSo ?? MISSING;
+                  const model = item.xe?.model ?? MISSING;
                   const cost = Number(item.chiPhi || 0);
 
                   return (
@@ -343,6 +350,7 @@ export default function MaintenanceManagement({
               </tbody>
             </table>
           </div>
+          <Pagination pager={historyPager} unit="đợt" label="Phân trang lịch sử bảo dưỡng" className="p-4 border-t border-slate-100" />
         </div>
       )}
 

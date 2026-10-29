@@ -3,6 +3,8 @@ import {
   Bus, PlusCircle, Search, ShieldCheck,
   AlertTriangle, Filter, Trash2, Pencil
 } from 'lucide-react';
+import Pagination from './Pagination';
+import { usePagination } from './usePagination';
 
 export default function VehicleManagement({
   vehicles = [],
@@ -35,6 +37,8 @@ export default function VehicleManagement({
     return matchSearch && matchBrand;
   });
 
+  const pager = usePagination(filteredVehicles, `${searchTerm}|${brandFilter}`);
+
   const uniqueBrands = Array.from(new Set(safeVehicles.map(v => v.hangSanXuat).filter(Boolean)));
 
   return (
@@ -50,9 +54,6 @@ export default function VehicleManagement({
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Danh Sách & Hồ Sơ Phương Tiện
           </h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1 font-medium">
-            Theo dõi {safeVehicles.length} phương tiện, biển kiểm soát, chu kỳ bảo dưỡng và tình trạng vận hành
-          </p>
         </div>
 
         <button
@@ -60,7 +61,7 @@ export default function VehicleManagement({
           className="px-5 py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-sm font-bold rounded-xl shadow-md shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap self-start sm:self-auto"
         >
           <PlusCircle className="w-5 h-5" />
-          <span>+ Thêm Xe Khách Mới</span>
+          <span>Thêm Xe Khách Mới</span>
         </button>
       </div>
 
@@ -107,7 +108,7 @@ export default function VehicleManagement({
       </div>
 
       {/* Fleet Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
+      <div className="scroll-mt-24 bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
@@ -131,7 +132,7 @@ export default function VehicleManagement({
                   </td>
                 </tr>
               ) : (
-                filteredVehicles.map((vehicle) => {
+                pager.pageItems.map((vehicle) => {
                   const isOverdue = overdueMap.has(vehicle.bienSo);
                   const overdueInfo = overdueMap.get(vehicle.bienSo);
 
@@ -212,6 +213,8 @@ export default function VehicleManagement({
           </table>
         </div>
       </div>
+
+      <Pagination pager={pager} unit="xe" label="Phân trang phương tiện" />
 
     </div>
   );

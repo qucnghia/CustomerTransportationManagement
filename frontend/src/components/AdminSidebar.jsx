@@ -184,7 +184,7 @@ export default function AdminSidebar({
         <div className="pt-4 border-t border-slate-800/80 mt-4 text-xs text-slate-500 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-semibold text-slate-400">TRANS-OPS 2026</span>
+            <span className="font-semibold text-slate-400">Quản lý xe khách · 2026</span>
           </div>
           <span className="text-[11px] text-slate-600">Bấm ngoài để đóng</span>
         </div>

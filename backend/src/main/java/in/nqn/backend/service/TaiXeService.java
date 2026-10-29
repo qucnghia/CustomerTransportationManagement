@@ -8,6 +8,7 @@ import in.nqn.backend.exception.ResourceNotFoundException;
 import in.nqn.backend.repository.TaiXeRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -64,6 +65,14 @@ public class TaiXeService {
             throw new IllegalArgumentException("Tháng phải nằm trong khoảng 1 - 12!");
         }
         return taiXeRepository.callSpTinhLuongTaiXeThang(nam, thang);
+    }
+
+    // Tính lương theo khoảng ngày (lương trả theo chuyến) để khớp kỳ với báo cáo doanh thu
+    public List<LuongTaiXeResponse> getLuongTaiXeTheoKhoang(LocalDate tuNgay, LocalDate denNgay) {
+        if (tuNgay.isAfter(denNgay)) {
+            throw new IllegalArgumentException("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc!");
+        }
+        return taiXeRepository.callSpTinhLuongTheoKhoang(tuNgay, denNgay);
     }
 
     // 2. Lấy bảng lương tài xế tháng hiện tại (Đọc từ View v_BangLuongTaiXeHienTai)

@@ -3,6 +3,14 @@ import { CalendarPlus } from 'lucide-react';
 import { api, toDateTimeInput } from '../../services/api';
 import { Field, Row, ErrorBox, FormActions } from './FormParts';
 import { inputClass, useSubmit } from './formUtils';
+import DatePicker from '../DatePicker';
+
+const STATUS_OPTIONS = [
+  ['DaLenLich', 'Sắp khởi hành (Đã lên lịch)'],
+  ['DangChay', 'Đang chạy trên tuyến'],
+  ['HoanThanh', 'Hoàn thành'],
+  ['Huy', 'Đã hủy']
+];
 
 export default function TripForm({ entity, routes, vehicles, drivers, onClose, onSaved }) {
   const isEdit = Boolean(entity);
@@ -100,10 +108,13 @@ export default function TripForm({ entity, routes, vehicles, drivers, onClose, o
 
       <Row>
         <Field label="Thời Gian Khởi Hành *">
-          <input type="datetime-local" required value={form.thoiGianKhoiHanh} onChange={set('thoiGianKhoiHanh')} className={inputClass} />
+          <DatePicker withTime required value={form.thoiGianKhoiHanh}
+            onChange={(v) => setForm({ ...form, thoiGianKhoiHanh: v })} className={inputClass} />
         </Field>
         <Field label="Thời Gian Đến Dự Kiến *">
-          <input type="datetime-local" required value={form.thoiGianKetThuc} onChange={set('thoiGianKetThuc')} className={inputClass} />
+          <DatePicker withTime required value={form.thoiGianKetThuc} defaultTime="12:00"
+            min={form.thoiGianKhoiHanh.slice(0, 10) || undefined}
+            onChange={(v) => setForm({ ...form, thoiGianKetThuc: v })} className={inputClass} />
         </Field>
       </Row>
 
@@ -116,10 +127,12 @@ export default function TripForm({ entity, routes, vehicles, drivers, onClose, o
         </Field>
         <Field label="Trạng Thái Chuyến">
           <select value={form.trangThai} onChange={set('trangThai')} className={inputClass}>
-            <option value="DaLenLich">Sắp khởi hành (Đã lên lịch)</option>
-            <option value="DangChay">Đang chạy trên tuyến</option>
-            <option value="HoanThanh">Hoàn thành</option>
-            <option value="Huy">Đã hủy</option>
+            {STATUS_OPTIONS.map(([value, label], i) => (
+              // Khi sửa: không cho lùi về trạng thái trước trạng thái hiện tại
+              <option key={value} value={value} disabled={isEdit && i < STATUS_OPTIONS.findIndex(([v]) => v === entity.trangThai)}>
+                {label}
+              </option>
+            ))}
           </select>
         </Field>
       </Row>

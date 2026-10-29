@@ -73,6 +73,70 @@ class ChuyenXeServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.createChuyenXe(request(10, 1, 2, 0)));
     }
 
+    private ChuyenXe chuyenCo(String trangThai) {
+        ChuyenXe c = new ChuyenXe();
+        c.setId(7);
+        c.setTrangThai(trangThai);
+        when(chuyenXeRepo.findById(7)).thenReturn(Optional.of(c));
+        return c;
+    }
+
+    @Test
+    void chuyenTrangThaiChiTienMotBuoc() {
+        ChuyenXe c = chuyenCo("DaLenLich");
+        assertEquals("DangChay", service.chuyenTrangThaiTiepTheo(7).getTrangThai());
+        assertEquals("HoanThanh", service.chuyenTrangThaiTiepTheo(7).getTrangThai());
+        assertThrows(IllegalArgumentException.class, () -> service.chuyenTrangThaiTiepTheo(7));
+        assertEquals("HoanThanh", c.getTrangThai());
+    }
+
+    @Test
+    void chuyenDaHuyKhongChuyenTiepDuoc() {
+        chuyenCo("Huy");
+        assertThrows(IllegalArgumentException.class, () -> service.chuyenTrangThaiTiepTheo(7));
+    }
+
+    @Test
+    void khongDuocSuaChuyenDaHoanThanh() {
+        chuyenCo("HoanThanh");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.updateChuyenXe(7, request(10, 1, 2, 2)));
+        assertTrue(ex.getMessage().contains("đã hoàn thành"));
+        verify(chuyenXeRepo, never()).save(any());
+    }
+
+    @Test
+    void khongDuocLuiTrangThaiKhiSua() {
+        chuyenCo("DangChay");
+        ChuyenXeRequest r = request(10, 1, 2, 2);
+        r.setTrangThai("DaLenLich");
+        assertThrows(IllegalArgumentException.class, () -> service.updateChuyenXe(7, r));
+
+        r.setTrangThai("HoanThanh");
+        assertEquals("HoanThanh", service.updateChuyenXe(7, r).getTrangThai());
+    }
+
+    @Test
+    void chiHuyDuocChuyenSapKhoiHanh() {
+        ChuyenXe c = chuyenCo("DaLenLich");
+        assertEquals("Huy", service.huyChuyenXe(7).getTrangThai());
+        assertThrows(IllegalArgumentException.class, () -> service.huyChuyenXe(7)); // đã hủy rồi
+
+        c.setTrangThai("DangChay");
+        assertThrows(IllegalArgumentException.class, () -> service.huyChuyenXe(7));
+        c.setTrangThai("HoanThanh");
+        assertThrows(IllegalArgumentException.class, () -> service.huyChuyenXe(7));
+    }
+
+    @Test
+    void khongDuocSuaChuyenDaHuy() {
+        chuyenCo("Huy");
+        ChuyenXeRequest r = request(10, 1, 2, 2);
+        r.setTrangThai("DaLenLich");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> service.updateChuyenXe(7, r));
+        assertTrue(ex.getMessage().contains("đã bị hủy"));
+    }
+
     @Test
     void trangThaiPhaiHopLe() {
         ChuyenXeRequest r = request(10, 1, 2, 2);

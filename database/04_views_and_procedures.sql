@@ -8,6 +8,7 @@ USE QuanLyVanTai;
 
 -- Xóa các thủ tục, hàm và view cũ nếu tồn tại
 DROP PROCEDURE IF EXISTS sp_TinhLuongTaiXeThang;
+DROP PROCEDURE IF EXISTS sp_TinhLuongTheoKhoang;
 DROP PROCEDURE IF EXISTS sp_BaoCaoDoanhThuTheoXe;
 DROP PROCEDURE IF EXISTS sp_DanhSachBaoDuongXe;
 DROP VIEW IF EXISTS v_XeQuaHanBaoDuong;
@@ -64,14 +65,13 @@ WHERE cx.TrangThai = 'HoanThanh';
 
 DELIMITER //
 
--- Bước 2: Bảng lương theo năm & tháng bất kỳ
-CREATE PROCEDURE sp_TinhLuongTaiXeThang(
-    IN p_Nam INT,
-    IN p_Thang INT
+-- Bước 2: Bảng lương theo khoảng ngày bất kỳ (lương trả theo chuyến nên cộng được theo ngày,
+--         dùng cho báo cáo lợi nhuận để khớp kỳ với doanh thu)
+CREATE PROCEDURE sp_TinhLuongTheoKhoang(
+    IN p_TuNgay DATE,
+    IN p_DenNgay DATE
 )
 BEGIN
-    DECLARE v_DauThang DATE DEFAULT MAKEDATE(p_Nam, 1) + INTERVAL (p_Thang - 1) MONTH;
-
     SELECT
         tx.MaTaiXe,
         tx.HoTen,
@@ -83,10 +83,20 @@ BEGIN
         COALESCE(SUM(l.TienLuong), 0.0) AS TongLuongThang
     FROM TAI_XE tx
     LEFT JOIN v_LuongTheoChuyen l ON l.MaTaiXe = tx.MaTaiXe
-        AND l.ThoiGianKhoiHanh >= v_DauThang
-        AND l.ThoiGianKhoiHanh < v_DauThang + INTERVAL 1 MONTH
+        AND l.ThoiGianKhoiHanh >= p_TuNgay
+        AND l.ThoiGianKhoiHanh < p_DenNgay + INTERVAL 1 DAY
     GROUP BY tx.MaTaiXe, tx.HoTen, tx.LoaiBangLai, tx.ThamNien
     ORDER BY TongLuongThang DESC;
+END //
+
+-- Bước 3: Bảng lương theo năm & tháng = khoảng từ ngày 1 đến ngày cuối tháng
+CREATE PROCEDURE sp_TinhLuongTaiXeThang(
+    IN p_Nam INT,
+    IN p_Thang INT
+)
+BEGIN
+    DECLARE v_DauThang DATE DEFAULT MAKEDATE(p_Nam, 1) + INTERVAL (p_Thang - 1) MONTH;
+    CALL sp_TinhLuongTheoKhoang(v_DauThang, LAST_DAY(v_DauThang));
 END //
 
 -- =============================================================================
